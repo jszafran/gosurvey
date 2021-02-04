@@ -7,6 +7,16 @@ type Question struct {
 	maxVal int
 }
 
+type QuestionResults map[int]int
+
+func (qr *QuestionResults) getAllRespondentsCount() int {
+	res := 0
+	for _, v := range *qr {
+		res += v
+	}
+	return res
+}
+
 func (q *Question) getEmptyAnswersMap() map[int]int {
 	m := make(map[int]int, 0)
 	for i := q.minVal; i <= q.maxVal; i++ {
