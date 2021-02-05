@@ -92,20 +92,41 @@ func TestQuestionResults(t *testing.T) {
 }
 
 func TestOrgNodes(t *testing.T) {
-	t.Run("Test if rollup filtering works.", func(t *testing.T) {
-		on := OrgNodes{"N01.", "N01.01.", "N01.01.01.", "N01.01.02.", "N02."}
-		got := on.filterByOrgUnit("N01.01.", Rollup)
+	on := OrgNodes{"N01.", "N01.01.", "N01.01.01.", "N01.01.02.", "N02."}
+	t.Run("Test if rollup filtering works for existing unit.", func(t *testing.T) {
+		node := "N01.01."
+		got := on.filterByOrgUnit(node, Rollup)
 		want := []int{1, 2, 3}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Got %v, expected %v, given input %v and node %s", got, want, on, node)
+		}
+	})
+	t.Run("Test if rollup filtering works for nonexisting unit.", func(t *testing.T) {
+		node := "N01.03."
+		got := on.filterByOrgUnit(node, Rollup)
+		want := make([]int, 0)
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("Got %v, expected %v, given input %v", got, want, on)
 		}
-
-		got = on.filterByOrgUnit("N01.03.", Rollup)
-		want = make([]int, 0)
+	})
+	t.Run("Test if direct filtering works for existing unit.", func(t *testing.T) {
+		node := "N01.01.01."
+		got := on.filterByOrgUnit("N01.01.01.", Direct)
+		want := []int{2}
 
 		if !reflect.DeepEqual(got, want) {
-			t.Errorf("Got %v, expected %v, given input %v", got, want, on)
+			t.Errorf("Got %v, expected %v, given input %v and org unit %s", got, want, on, node)
+		}
+	})
+	t.Run("Test if direct filtering works for non-existing unit.", func(t *testing.T) {
+		node := "N05.01.02."
+		got := on.filterByOrgUnit(node, Direct)
+		want := make([]int, 0)
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Got %v, expected %v, given input %v and org unit %s", got, want, on, node)
 		}
 	})
 }
