@@ -78,3 +78,15 @@ func TestCountAnswers(t *testing.T) {
 		}
 	})
 }
+
+func TestQuestionResults(t *testing.T) {
+	t.Run("test if respondents are summed properly", func(t *testing.T) {
+		qr := QuestionResults{1: 200, 2: 300, 3: 100, 4: 400}
+		got := qr.getAllRespondentsCount()
+		want := 1000
+
+		if got != want {
+			t.Errorf("Got %d, exptected %d, given input %v", got, want, qr)
+		}
+	})
+}
