@@ -130,3 +130,44 @@ func TestOrgNodes(t *testing.T) {
 		}
 	})
 }
+
+// tests for possible alternative implemenation of org unit filtering with 0/1
+func TestOrgNodesZO(t *testing.T) {
+	on := OrgNodes{"N01.", "N01.01.", "N01.01.01.", "N01.01.02.", "N02."}
+	t.Run("Test if rollup filtering works for existing unit.", func(t *testing.T) {
+		node := "N01.01."
+		got := on.filterByOrgUnitZO(node, Rollup)
+		want := []int8{0, 1, 1, 1, 0}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Got %v, expected %v, given input %v and node %s", got, want, on, node)
+		}
+	})
+	t.Run("Test if rollup filtering works for nonexisting unit.", func(t *testing.T) {
+		node := "N01.03."
+		got := on.filterByOrgUnitZO(node, Rollup)
+		want := []int8{0, 0, 0, 0, 0}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Got %v, expected %v, given input %v", got, want, on)
+		}
+	})
+	t.Run("Test if direct filtering works for existing unit.", func(t *testing.T) {
+		node := "N01.01.01."
+		got := on.filterByOrgUnitZO("N01.01.01.", Direct)
+		want := []int8{0, 0, 1, 0, 0}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Got %v, expected %v, given input %v and org unit %s", got, want, on, node)
+		}
+	})
+	t.Run("Test if direct filtering works for non-existing unit.", func(t *testing.T) {
+		node := "N05.01.02."
+		got := on.filterByOrgUnitZO(node, Direct)
+		want := []int8{0, 0, 0, 0, 0}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Got %v, expected %v, given input %v and org unit %s", got, want, on, node)
+		}
+	})
+}
