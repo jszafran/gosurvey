@@ -59,3 +59,24 @@ func (on *OrgNodes) filterByOrgUnit(orgNode string, filterType OrgFilterType) []
 	}
 	return res
 }
+
+// alternative implementation for returning 0/1
+func (on *OrgNodes) filterByOrgUnitZO(orgNode string, filterType OrgFilterType) []int8 {
+	res := make([]int8, 0)
+	for _, v := range *on {
+		if filterType == Rollup {
+			if strings.HasPrefix(v, orgNode) {
+				res = append(res, 1)
+			} else {
+				res = append(res, 0)
+			}
+		} else if filterType == Direct {
+			if v == orgNode {
+				res = append(res, 1)
+			} else {
+				res = append(res, 0)
+			}
+		}
+	}
+	return res
+}
